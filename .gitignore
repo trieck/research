@@ -1,1 +1,6 @@
 nbproject/
+build/
+dist/
+nbproject/
+.dep.inc
+
