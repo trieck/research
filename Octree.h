@@ -5,8 +5,7 @@
 
 class Octree {
 public:
-  Octree();
-  Octree(const Octree& orig);
+  Octree(const Vector &origin, float size);
   virtual ~Octree();
   
   void insert(const Vector& v);
@@ -16,7 +15,7 @@ private:
   void destroy();
   Octree *children[8];
   Vector origin;
-  float extent;
+  float size;
 };
 
 #endif  // OCTREE_H

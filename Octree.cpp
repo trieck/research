@@ -1,13 +1,13 @@
 #include "Octree.h"
 #include <string.h>
 
-Octree::Octree() : extent(0) {
+Octree::Octree(const Vector &origin, float size)
+{
+  this->origin = origin;
+  this->size = size;  
   memset(children, 0, sizeof (Octree*) * 8);
 }
-
-Octree::Octree(const Octree& orig) {
-}
-
+  
 Octree::~Octree() {
   destroy();
 }
@@ -22,6 +22,15 @@ bool Octree::isLeaf() const {
 }
 
 void Octree::insert(const Vector& v) {
+  
+  // split the current node and make new trees for each child octant
+  for (int i = 0; i < 8; ++i) {
+    Vector newOrigin = origin;
+    newOrigin.z += size * (i & 1 ? .5 : -.5); // ??? all odd nodes have +z?
+    
+    
+  }
+  
   /*
     // Split the current node and create new empty trees for each
           // child octant.
