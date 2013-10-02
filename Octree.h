@@ -7,10 +7,11 @@ class Octree {
 public:
   Octree(const Vector &origin, float size);
   virtual ~Octree();
-  
-  void insert(const Vector& v);
+
+  void insert(const Vector& point);
   bool isLeaf() const;
-  
+  int octant(const Vector& point) const;
+
 private:
   void destroy();
   Octree *children[8];

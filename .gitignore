@@ -1,4 +1,7 @@
-build/
-dist/
-.dep.inc
-
+Debug/
+Release/
+ipch/
+*.sdf
+*.opensdf
+*.user
+*.suo

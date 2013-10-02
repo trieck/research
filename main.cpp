@@ -1,9 +1,12 @@
-#include <cstdlib>
+#include "Octree.h"
+#include <memory>
 
-using namespace std;
+int main(int argc, char** argv) 
+{
+	std::auto_ptr<Octree> tree(new Octree(Vector(0, 0, 0), 1));
 
-int main(int argc, char** argv) {
+	tree->insert(Vector(-.3, -.3, -.3));
 
-    return 0;
+	return 0;
 }
 

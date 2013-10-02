@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "octree", "octree.vcxproj", "{12A64063-7D86-4A30-AB08-3EF226CEEDFB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{12A64063-7D86-4A30-AB08-3EF226CEEDFB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{12A64063-7D86-4A30-AB08-3EF226CEEDFB}.Debug|Win32.Build.0 = Debug|Win32
+		{12A64063-7D86-4A30-AB08-3EF226CEEDFB}.Release|Win32.ActiveCfg = Release|Win32
+		{12A64063-7D86-4A30-AB08-3EF226CEEDFB}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
