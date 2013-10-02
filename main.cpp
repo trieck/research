@@ -37,6 +37,6 @@ int main(int argc, char** argv)
 
   cout << "   elapsed time " << timer << endl;
 
-	return 0;
+  return 0;
 }
 
