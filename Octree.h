@@ -14,9 +14,10 @@ public:
 
 private:
   void destroy();
-  Octree *children[8];
-  Vector origin;
-  float size;
+  Octree *children[8];  // children of the tree
+  Vector origin;        // origin of the tree
+  Vector *value;        // leaf value
+  float size;           // dimensions
 };
 
 #endif  // OCTREE_H
