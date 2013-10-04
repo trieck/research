@@ -56,12 +56,11 @@ public:
 	// Implementation
 private:
 	// Maximum depth of the b-tree.
-	// Currently this is set to 5.
 	// The average number of probes p is about
 	// logM(N).  So, we can have about M^p 
 	// items in the tree before we exceed the depth 
 	// limits of the tree.
-	enum { MAXDEPTH = 5 };
+	enum { MAXDEPTH = 10 };
 
 	void allocpages();
 	void freepages();

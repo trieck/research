@@ -109,6 +109,9 @@ bool BTree::open(LPCTSTR filename, OpenMode m)
 /////////////////////////////////////////////////////////////////////////////
 bool BTree::readpage(pageid page_no, int level)
 {
+	if (level >= MAXDEPTH)
+		return false;	// too deep
+
 	return io.readblock(page_no, pages[level]) == PAGE_SIZE;
 }
 
@@ -135,6 +138,9 @@ Datum BTree::search(const Datum& key)
 Datum BTree::searchR(LPPAGE h, const Datum& key, int level)
 {
 	int j;
+	
+	if (level >= MAXDEPTH-1)
+		return NullDatum;	// too deep
 
 	if (ISLEAF(h)) { // leaf page
 		for (j = 0; j < NODES(h); j++) {
@@ -189,6 +195,9 @@ LPPAGE BTree::insertR(LPPAGE h, const Node& node, int level)
 {
 	int i, j;
 	Node t = node;
+
+	if (level >= MAXDEPTH-1)
+		return 0;	// too deep
 	
 	if (ISLEAF(h)) { // leaf page
 		for (j = 0; j < NODES(h); j++) {

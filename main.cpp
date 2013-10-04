@@ -10,7 +10,7 @@ wstring randomString()
 	wstring output;
 	wchar_t c;
 
-	int len = MAX_DATUM_LEN/4;
+	uint32_t len = MAX_DATUM_LEN/4;
 
 	output.resize(len);
 
@@ -55,7 +55,7 @@ int wmain(int argc, wchar_t* argv[])
 		
 		wstring result = tree.search(key);
 		if (result.length() > 0) {
-			dupes++; i--;
+			i--;	// duplicate
 			continue;
 		}
 
@@ -71,10 +71,6 @@ int wmain(int argc, wchar_t* argv[])
 	tree.close();
 
 	wcout << L"   elapsed time: " << timer << endl;
-
-	if (dupes) {
-		wcout << L" dupe key count: " << dupes << endl;
-	}
 
 	return 0;
 }
