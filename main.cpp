@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "stree.h"
 #include "HiresTimer.h"
+#include <random>
 
 namespace {		// anonymous
 
@@ -16,11 +17,11 @@ wstring randomString()
 	LARGE_INTEGER li;
 	QueryPerformanceCounter(&li);	
 
-	srand(li.LowPart);
+	std::mt19937 eng(li.LowPart);
 
 	for (uint32_t i = 0; i < len; ++i) {
 		do {
-			c = rand() % (USHRT_MAX+1);
+			c = eng() % (USHRT_MAX+1);
 		} while (!iswprint(c));
 		output[i] = c;
 	}
