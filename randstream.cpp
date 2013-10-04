@@ -3,8 +3,6 @@
 //	RANDSTREAM.CPP : random access file based stream class
 //	NOTE: NOT externally creatable
 //
-//	Copyright(c) 2006, KnowX.com, All Rights Reserved
-//
 
 #include "stdafx.h"
 #include "RandStream.h"

@@ -13,7 +13,7 @@ typedef uint64_t pageid;
 
 /////////////////////////////////////////////////////////////////////////////
 typedef struct Datum {
-	uint8_t len;
+	int8_t len;
 	uint8_t buf[MAX_DATUM_LEN];
 } *LPITEM;
 
@@ -85,4 +85,4 @@ private:
 
 // Datum helpers
 bool operator == (const Datum& lhs, const Datum& rhs);
-bool isNull(const Datum& d);
+bool IsNullDatum(const Datum& d);
