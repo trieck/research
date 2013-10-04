@@ -3,19 +3,16 @@
 //	BTREE.H : Disk based B-tree
 //
 
+#ifndef __BTREE_H__
+#define __BTREE_H__
+
 #include "blockio.h"
+#include "datum.h"
+
+typedef uint64_t pageid;
 
 // ensure one byte alignment for structures below
 #pragma pack (push, 1)	
-
-#define MAX_DATUM_LEN (80)
-typedef uint64_t pageid;
-
-/////////////////////////////////////////////////////////////////////////////
-typedef struct Datum {
-	int8_t len;
-	uint8_t buf[MAX_DATUM_LEN];
-} *LPITEM;
 
 /////////////////////////////////////////////////////////////////////////////
 typedef struct Node {
@@ -83,6 +80,4 @@ private:
 	LPPAGE frame[2];					// spare frames for page split
 };
 
-// Datum helpers
-bool operator == (const Datum& lhs, const Datum& rhs);
-bool IsNullDatum(const Datum& d);
+#endif // __BTREE_H__

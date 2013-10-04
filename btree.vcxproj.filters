@@ -33,6 +33,12 @@
     <ClInclude Include="HiresTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="datum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -51,6 +57,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="HiresTimer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="datum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

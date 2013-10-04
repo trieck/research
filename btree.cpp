@@ -41,30 +41,6 @@
 		p = NULL;																	\
 	} while(0)
 
-namespace { const Datum NullDatum = { SCHAR_MIN, '\0' }; }
-
-/////////////////////////////////////////////////////////////////////////////
-bool operator == (const Datum& lhs, const Datum& rhs) 
-{
-	if (lhs.len != rhs.len)
-		return false;
-
-	return memcmp(lhs.buf, rhs.buf, lhs.len) == 0;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-bool operator < (const Datum& lhs, const Datum& rhs) 
-{
-	size_t len = min(lhs.len, rhs.len);
-	return memcmp(lhs.buf, rhs.buf, len) < 0;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-bool IsNullDatum(const Datum& d)
-{
-	return d.len == SCHAR_MIN;
-}
-
 /////////////////////////////////////////////////////////////////////////////
 BTree::BTree()
 	: io(PAGE_SIZE)
