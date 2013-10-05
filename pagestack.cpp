@@ -21,9 +21,22 @@ PageStack::~PageStack()
 /////////////////////////////////////////////////////////////////////////////
 void PageStack::allocpages()
 {
-	pages = new LPPAGE[INITIAL_SIZE];
+	pages = (LPPAGE*)malloc(sizeof(LPPAGE) * INITIAL_SIZE);
 
-	for (uint32_t i = 0; i < INITIAL_SIZE; i++) {
+	for (uint32_t i = 0; i < INITIAL_SIZE; ++i) {
+		pages[i] = MakePage();
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void PageStack::reallocpages()
+{
+	index = elements;
+	elements = elements * 2;
+	pages = (LPPAGE*)realloc(pages, sizeof(LPPAGE) * elements);
+
+	for (uint32_t i = 0; i < index; ++i) {
+		pages[index+i] = pages[i];
 		pages[i] = MakePage();
 	}
 }
@@ -31,18 +44,18 @@ void PageStack::allocpages()
 /////////////////////////////////////////////////////////////////////////////
 void PageStack::freepages()
 {
-	for (uint32_t i = 0; i < elements; i++) {
+	for (uint32_t i = 0; i < elements; ++i) {
 		FreePage(pages[i]);
 	}
 
-	delete [] pages;
+	free(pages);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 LPPAGE PageStack::push()
 {
-	if (index <= 0)
-		return NULL;
+	if (index == 0)
+		reallocpages();	// stack full
 
 	return pages[index--];
 }

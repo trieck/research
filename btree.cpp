@@ -131,6 +131,7 @@ Datum BTree::searchR(LPPAGE h, const Datum& key)
 	return NullDatum;
 }
 
+/////////////////////////////////////////////////////////////////////////////
 Datum BTree::searchN(pageid page_no, const Datum& key)
 {
 	Datum d = NullDatum;
@@ -210,6 +211,7 @@ LPPAGE BTree::insertR(LPPAGE h, const Node& node)
 	return split(h);	
 }
 
+/////////////////////////////////////////////////////////////////////////////
 LPPAGE BTree::insertN(pageid page_no, const Node& node)
 {
 	LPPAGE u = NULL;
@@ -227,7 +229,6 @@ LPPAGE BTree::insertN(pageid page_no, const Node& node)
 
 	return u;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 LPPAGE BTree::split(LPPAGE h)

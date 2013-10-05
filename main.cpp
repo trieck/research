@@ -47,7 +47,6 @@ int wmain(int argc, wchar_t* argv[])
 	}
 	
 	int ncount = _wtoi(argv[2]);
-	int dupes = 0;
 
 	for (int i = 0; i < ncount; i++) {
 		wstring key = randomString();

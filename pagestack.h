@@ -23,8 +23,9 @@ public:
 	// Implementation
 private:
 	void allocpages();
+	void reallocpages();
 	void freepages();
-	enum { INITIAL_SIZE = 10 };
+	enum { INITIAL_SIZE = 5 };
 
 	LPPAGE* pages;			// array of page pointers
 	uint32_t elements;	// number of elements in array
