@@ -6,9 +6,6 @@
 #include "stdafx.h"
 #include "btree.h"
 
-// size of a disk page
-#define PAGE_SIZE			(4096)
-
 // page type flags
 #define PTF_LEAF			(1 << 0)
 
@@ -29,50 +26,23 @@
 #define VALUE(p, n)		(p->data[n].value)
 #define NEXT(p, n)		(p->data[n].next)
 
-// allocate a new page
-#define MKPAGE()		\
-	((LPPAGE)VirtualAlloc(NULL, PAGE_SIZE, MEM_COMMIT, PAGE_READWRITE))
-
-// free an allocated page
-#define FREEPAGE(p)														\
-	do {																				\
-		VirtualFree(p, 0, MEM_RELEASE);						\
-		VirtualFree(p, PAGE_SIZE, MEM_DECOMMIT);	\
-		p = NULL;																	\
-	} while(0)
-
 /////////////////////////////////////////////////////////////////////////////
 BTree::BTree()
 	: io(PAGE_SIZE)
 {
-	allocpages();
+	root = pagestack.push();
+	current = NULL;
+	frame[0] = MakePage();
+	frame[1] = MakePage();
 }
 
 /////////////////////////////////////////////////////////////////////////////
 BTree::~BTree()
 {
 	close();
-	freepages();
-}
-
-/////////////////////////////////////////////////////////////////////////////
-void BTree::allocpages()
-{
-	for (int i = 0; i < MAXDEPTH; i++) {
-		pages[i] = MKPAGE();
-	}
-	frame[0] = MKPAGE();
-	frame[1] = MKPAGE();
-}
-
-/////////////////////////////////////////////////////////////////////////////
-void BTree::freepages()
-{
-	for (int i = 0; i < MAXDEPTH; i++) {
-		FREEPAGE(pages[i]);
-	}
-	FREEPAGE(frame[0]);
-	FREEPAGE(frame[1]);
+	pagestack.pop();
+	FreePage(frame[0]);
+	FreePage(frame[1]);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -84,11 +54,20 @@ void BTree::close()
 /////////////////////////////////////////////////////////////////////////////
 void BTree::clear()
 {
-	for (int i = 0; i < MAXDEPTH; i++) {
-		memset(pages[i], 0, PAGE_SIZE);
-	}
 	memset(frame[0], 0, PAGE_SIZE);
 	memset(frame[1], 0, PAGE_SIZE);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void BTree::pushpage()
+{
+	current = pagestack.push();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void BTree::poppage()
+{
+	current = pagestack.pop();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -100,19 +79,16 @@ bool BTree::open(LPCTSTR filename, OpenMode m)
 
 	uint64_t size = io.getFileSize();
 	if (size != 0)
-		return readpage(0, 0);			// read page zero
+		return readpage(0, root);		// read page zero
 
-	SETLEAF(pages[0]);						// set root page to leaf
-	return writepage(pages[0]);		// write page zero
+	SETLEAF(root);								// set root page to leaf
+	return writepage(root);				// write page zero
 }
 
 /////////////////////////////////////////////////////////////////////////////
-bool BTree::readpage(pageid page_no, int level)
+bool BTree::readpage(pageid page_no, LPPAGE h)
 {
-	if (level >= MAXDEPTH)
-		return false;	// too deep
-
-	return io.readblock(page_no, pages[level]) == PAGE_SIZE;
+	return io.readblock(page_no, h) == PAGE_SIZE;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -131,33 +107,46 @@ bool BTree::insertpage(LPPAGE h)
 /////////////////////////////////////////////////////////////////////////////
 Datum BTree::search(const Datum& key)
 {
-	return searchR(pages[0], key, 0);
+	return searchR(root, key);
 }
 
 /////////////////////////////////////////////////////////////////////////////
-Datum BTree::searchR(LPPAGE h, const Datum& key, int level)
+Datum BTree::searchR(LPPAGE h, const Datum& key)
 {
 	int j;
 	
-	if (level >= MAXDEPTH-1)
-		return NullDatum;	// too deep
-
 	if (ISLEAF(h)) { // leaf page
-		for (j = 0; j < NODES(h); j++) {
+		for (j = 0; j < NODES(h); ++j) {
 			if (KEY(h, j) == key)
 				return VALUE(h, j);
 		}
 	} else { // internal page
-		for (j = 0; j < NODES(h); j++) {
+		for (j = 0; j < NODES(h); ++j) {
 			if ((j+1 == NODES(h) || key < KEY(h, j+1))) {
-				if (!readpage(NEXT(h, j), level+1))
-					return NullDatum;
-				return searchR(pages[level+1], key, level+1);
+				return searchN(NEXT(h, j), key);
 			}
 		}
 	}
 
 	return NullDatum;
+}
+
+Datum BTree::searchN(pageid page_no, const Datum& key)
+{
+	Datum d = NullDatum;
+
+	pushpage();
+
+	do {
+		if (!readpage(page_no, current))
+			break;
+
+		d = searchR(current, key);
+	} while (0);
+
+	poppage();
+
+	return d;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -168,7 +157,7 @@ void BTree::insert(const Datum& key, const Datum& value)
 	node.key = key;
 	node.value = value;
 
-	LPPAGE u = insertR(pages[0], node, 0);
+	LPPAGE u = insertR(root, node);
 	if (u == 0) return;
 
 	// The basic idea with the root page split is that we create a new 
@@ -178,27 +167,24 @@ void BTree::insert(const Datum& key, const Datum& value)
 	LPPAGE t = frame[1];
 	memset(t, 0, PAGE_SIZE);
 
-	insertpage(pages[0]);	// relocate old root page
+	insertpage(root);	// relocate old root page
 
 	SETINTERNAL(t);
 	NODES(t) = 2;
-	KEY(t, 0) = KEY(pages[0], 0);
+	KEY(t, 0) = KEY(root, 0);
 	KEY(t, 1) = KEY(u, 0);
-	NEXT(t, 0) = PAGENO(pages[0]); NEXT(t, 1) = PAGENO(u);
+	NEXT(t, 0) = PAGENO(root); NEXT(t, 1) = PAGENO(u);
 
-	memcpy(pages[0], t, PAGE_SIZE);
-	writepage(pages[0]);
+	memcpy(root, t, PAGE_SIZE);
+	writepage(root);
 }
 
 /////////////////////////////////////////////////////////////////////////////
-LPPAGE BTree::insertR(LPPAGE h, const Node& node, int level)
+LPPAGE BTree::insertR(LPPAGE h, const Node& node)
 {
 	int i, j;
 	Node t = node;
 
-	if (level >= MAXDEPTH-1)
-		return 0;	// too deep
-	
 	if (ISLEAF(h)) { // leaf page
 		for (j = 0; j < NODES(h); j++) {
 			if (node.key < KEY(h, j)) break;
@@ -206,10 +192,7 @@ LPPAGE BTree::insertR(LPPAGE h, const Node& node, int level)
 	} else { // internal page
 		for (j = 0; j < NODES(h); j++) {
 			if ((j+1 == NODES(h) || node.key < KEY(h, j+1))) {
-				LPPAGE u; 
-				if (!readpage(NEXT(h, j++), level+1))
-					return 0;
-				u = insertR(pages[level+1], node, level+1);
+				LPPAGE u = insertN(NEXT(h, j++), node);
 				if (u == 0) return 0;
 				t.key = KEY(u, 0); t.next = PAGENO(u);
 				break;
@@ -226,6 +209,25 @@ LPPAGE BTree::insertR(LPPAGE h, const Node& node, int level)
 
 	return split(h);	
 }
+
+LPPAGE BTree::insertN(pageid page_no, const Node& node)
+{
+	LPPAGE u = NULL;
+
+	pushpage();
+	
+	do {
+		if (!readpage(page_no, current))
+			break;
+
+		u = insertR(current, node);
+	} while (0);
+
+	poppage();
+
+	return u;
+}
+
 
 /////////////////////////////////////////////////////////////////////////////
 LPPAGE BTree::split(LPPAGE h)

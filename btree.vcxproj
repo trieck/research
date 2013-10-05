@@ -253,6 +253,8 @@
     <ClInclude Include="btree.h" />
     <ClInclude Include="datum.h" />
     <ClInclude Include="HiresTimer.h" />
+    <ClInclude Include="page.h" />
+    <ClInclude Include="pagestack.h" />
     <ClInclude Include="randstream.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="stree.h" />
@@ -264,6 +266,8 @@
     <ClCompile Include="datum.cpp" />
     <ClCompile Include="HiresTimer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="page.cpp" />
+    <ClCompile Include="pagestack.cpp" />
     <ClCompile Include="randstream.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
