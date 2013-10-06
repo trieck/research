@@ -6,7 +6,6 @@
 #include "stdafx.h"
 #include "ifcparser.h"
 #include "exception.h"
-#include "field.h"
 
 #define FILE_TYPE						L"ISO-10303-21"
 #define HEADER							L"HEADER"
@@ -59,7 +58,7 @@ void IFCParser::parseheader()
 		THROW_BAD_FORMAT(HEADER, lineno);
 
 	// file description
-	wstringvec args;
+	fieldvec args;
 	line = parseline(args);
 	if (line != FILE_DESCRIPTION)
 		THROW_BAD_FORMAT(FILE_DESCRIPTION, lineno);
@@ -118,7 +117,7 @@ wstring IFCParser::getline()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-wstring IFCParser::parseline(wstringvec& args)
+wstring IFCParser::parseline(fieldvec& args)
 {
 	args.clear();
 
@@ -133,6 +132,7 @@ wstring IFCParser::parseline(wstringvec& args)
 	while ((c = ss.get()) != WEOF) {
 		switch (c) {
 		case '(':	// args
+			ss.unget();
 			parseargs(ss, args);
 			break;
 		default:
@@ -145,31 +145,54 @@ wstring IFCParser::parseline(wstringvec& args)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void IFCParser::parseargs(wistream& is, wstringvec& args)
+void IFCParser::parseargs(wistream& is, fieldvec& args)
 {
-	int level = 1;
+	args.clear();
+
+	wstring tok = gettok(is);	// '('
+
+	// parselist
+
+	tok = gettok(is);				// ')'
+	
+}
+
+/////////////////////////////////////////////////////////////////////////////
+wstring IFCParser::gettok(wistream& is)
+{
+	wstringstream token;
 
 	wchar_t c;
 	while ((c = is.get()) != WEOF) {
 		switch (c) {
 		case '(':
-			// parselist
-			++level;
-			break;
 		case ')':
-			--level;
-			break;
+		case '\'':
 		case ',':
-			break;
+		if (token.str().length() > 0) {
+				is.unget();
+				return token.str();
+			}
+			token << c;
+			return token.str();
 		case '\\':
-			break;
+			if (token.str().length() > 0) {
+				is.unget();
+				return token.str();
+			}
+			while ((c = is.get()) != EOF) {
+				if (c == '\\')
+					break;
+				token << c;
+			}
+			return token.str();
 		default:
+			token << c;
 			break;
 		}
 	}
 
-	if (level != 0)
-		throw Exception(L"Unable to parse fields at line#%I64u.", lineno);
+	return token.str();
 }
 
 /////////////////////////////////////////////////////////////////////////////
