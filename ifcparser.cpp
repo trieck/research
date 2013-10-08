@@ -13,6 +13,8 @@
 #define FILE_NAME						L"FILE_NAME"
 #define FILE_SCHEMA					L"FILE_SCHEMA"
 #define END_SECTION					L"ENDSEC"
+#define DATA								L"DATA"
+#define END_FILE_TYPE				L"END-ISO-10303-21"
 
 #define THROW_BAD_FORMAT(s,n)	\
 	throw Exception(L"bad file format: expected \"%s\" at line#%I64u.", s, n)
@@ -43,11 +45,14 @@ void IFCParser::parse()
 {
 	wstring line = getline();
 	if (line != FILE_TYPE)
-		throw Exception(L"bad file format: expected \"%s\" at line#%I64u.", 
-			FILE_TYPE, lineno);
+		THROW_BAD_FORMAT(FILE_TYPE, lineno);
 
 	parseheader();
 	parsedata();
+
+	line = getline();
+	if (line != END_FILE_TYPE)
+		THROW_BAD_FORMAT(END_FILE_TYPE, lineno);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -83,7 +88,20 @@ void IFCParser::parseheader()
 /////////////////////////////////////////////////////////////////////////////
 void IFCParser::parsedata()
 {
-	;
+	// data
+	wstring line = getline();
+	if (line != DATA)
+		THROW_BAD_FORMAT(DATA, lineno);
+
+	Attribute attribs;
+	wstring entity;
+
+	do {
+		entity = parseentity(attribs);
+	} while (entity.length() > 0 && entity[0] == '#');
+
+	if (entity != END_SECTION)
+		THROW_BAD_FORMAT(END_SECTION, lineno);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -149,7 +167,7 @@ void IFCParser::parseargs(wistream& is, Attribute& args)
 
 	parselist(is, args);
 
-	tok = gettok(is);				// ')'	
+	tok = gettok(is);					// ')'	
 }
 
 /////////////////////////////////////////////////////////////////////////////

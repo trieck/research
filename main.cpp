@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ifcparser.h"
 #include "exception.h"
+#include "HiresTimer.h"
 
 int wmain(int argc, wchar_t* argv[])
 {
@@ -9,6 +10,7 @@ int wmain(int argc, wchar_t* argv[])
 		return 1;
 	}
 		
+	HiresTimer timer;
 	IFCParser parser;
 
 	try {
@@ -17,6 +19,8 @@ int wmain(int argc, wchar_t* argv[])
 		wcerr << e.getDescription() << endl;
 		return 2;
 	}
+
+	wcout << L"   elapsed time: " << timer << endl;
 
 	return 0;
 }
