@@ -47,6 +47,7 @@ void IFCParser::parse()
 			FILE_TYPE, lineno);
 
 	parseheader();
+	parsedata();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -58,25 +59,31 @@ void IFCParser::parseheader()
 		THROW_BAD_FORMAT(HEADER, lineno);
 
 	// file description
-	fieldvec args;
-	line = parseline(args);
-	if (line != FILE_DESCRIPTION)
+	Attribute attribs;
+	wstring entity = parseentity(attribs);
+	if (entity != FILE_DESCRIPTION)
 		THROW_BAD_FORMAT(FILE_DESCRIPTION, lineno);
 
 	// filename
-	line = parseline(args);
-	if (line != FILE_NAME)
+	entity = parseentity(attribs);
+	if (entity != FILE_NAME)
 		THROW_BAD_FORMAT(FILE_NAME, lineno);
 
 	// file schema
-	line = parseline(args);
-	if (line != FILE_SCHEMA)
+	entity = parseentity(attribs);
+	if (entity != FILE_SCHEMA)
 		THROW_BAD_FORMAT(FILE_SCHEMA, lineno);
 
 	// end header
 	line = getline();
 	if (line != END_SECTION)
 		THROW_BAD_FORMAT(END_SECTION,lineno);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void IFCParser::parsedata()
+{
+	;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -117,7 +124,7 @@ wstring IFCParser::getline()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-wstring IFCParser::parseline(fieldvec& args)
+wstring IFCParser::parseentity(Attribute& args)
 {
 	args.clear();
 
@@ -126,35 +133,63 @@ wstring IFCParser::parseline(fieldvec& args)
 		return L"";
 
 	wistringstream ss(line);
-	wstringstream entity;
+	
+	wstring entity = gettok(ss);
+	parseargs(ss, args);
 
-	wchar_t c;
-	while ((c = ss.get()) != WEOF) {
-		switch (c) {
-		case '(':	// args
-			ss.unget();
-			parseargs(ss, args);
-			break;
-		default:
-			entity << c;
-			break;
-		}
-	}
-
-	return entity.str();
+	return entity;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void IFCParser::parseargs(wistream& is, fieldvec& args)
+void IFCParser::parseargs(wistream& is, Attribute& args)
 {
 	args.clear();
 
 	wstring tok = gettok(is);	// '('
 
-	// parselist
+	parselist(is, args);
 
-	tok = gettok(is);				// ')'
-	
+	tok = gettok(is);				// ')'	
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void IFCParser::parselist(wistream& is, Attribute& args)
+{
+	args.clear();
+
+	wstring tok;
+	while ((tok = lookahead(is)).length() > 0) {
+		if (tok[0] == L',') {
+			gettok(is);
+			continue;	// more
+		}
+
+		if (tok[0] == L')')
+			break;
+
+		if (tok[0] == L'(') {
+			Attribute* f = new Attribute();	// add a list
+			parseargs(is, *f);
+			args.add(f);
+			continue;
+		}
+
+		tok = gettok(is);
+
+		args.add(tok);	// add a value
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////
+wstring IFCParser::lookahead(wistream& is)
+{
+	wistream::pos_type pos = is.tellg();
+
+	wstring tok = gettok(is);
+
+	is.seekg(pos);
+
+	return tok;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -167,7 +202,6 @@ wstring IFCParser::gettok(wistream& is)
 		switch (c) {
 		case '(':
 		case ')':
-		case '\'':
 		case ',':
 		if (token.str().length() > 0) {
 				is.unget();
@@ -175,13 +209,13 @@ wstring IFCParser::gettok(wistream& is)
 			}
 			token << c;
 			return token.str();
-		case '\\':
+		case '\'':
 			if (token.str().length() > 0) {
 				is.unget();
 				return token.str();
 			}
 			while ((c = is.get()) != EOF) {
-				if (c == '\\')
+				if (c == '\'')
 					break;
 				token << c;
 			}

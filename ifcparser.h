@@ -6,7 +6,7 @@
 #ifndef __IFCPARSER_H__
 #define __IFCPARSER_H__
 
-#include "field.h"
+#include "attribute.h"
 
 class IFCParser
 {
@@ -22,11 +22,14 @@ public:
 private:
 	void parse();
 	void parseheader();
-	wstring parseline(fieldvec& args);
-	void parseargs(wistream& is, fieldvec& args);
+	void parsedata();
+	wstring parseentity(Attribute& attribs);
+	void parseargs(wistream& is, Attribute& args);
+	void parselist(wistream& is, Attribute& args);
 	void comment();
 	wstring getline();
 	wstring gettok(wistream& is);
+	wstring lookahead(wistream& is);
 
 	wifstream stream;
 	uint64_t lineno;

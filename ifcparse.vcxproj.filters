@@ -27,7 +27,7 @@
     <ClInclude Include="exception.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="field.h">
+    <ClInclude Include="attribute.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -44,7 +44,7 @@
     <ClCompile Include="exception.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="field.cpp">
+    <ClCompile Include="attribute.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

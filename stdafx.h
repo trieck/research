@@ -17,6 +17,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <memory>
 
 using std::wstring;
 using std::wcout;
@@ -27,9 +28,7 @@ using std::wistream;
 using std::wifstream;
 using std::wstringstream;
 using std::wistringstream;
-using std::vector;
-
-typedef vector<wstring> wstringvec;
+using std::unique_ptr;
 
 #ifndef ASSERT
 #ifdef _DEBUG
