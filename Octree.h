@@ -10,28 +10,30 @@
 #ifndef __OCTREE_H__
 #define	__OCTREE_H__
 
-#include "Vector.h"
+#include "Datum.h"
+#include "region.h"
 
 /////////////////////////////////////////////////////////////////////////////
 class Octree 
 {
 	// Construction / Destruction
 public:
-  Octree(const Vector &origin, float size);
+  Octree(const Vector& origin, const Vector& halfDims);
   virtual ~Octree();
 
 	// Interface
-  void insert(const Vector& point);
-  bool isLeaf() const;
-  int octant(const Vector& point) const;
+  void insert(const Datum& d);
+  void query(const Region& region, DatumVec& results);
 
 	// Implementation
 private:
-  void destroy();
-  Octree *children[8];  // children
-  Vector origin;        // origin
-  Vector *value;        // leaf value
-  float size;           // dimensions
+	bool isLeaf() const;
+	int octant(const Datum& d) const;
+	void destroy();
+	Octree *children[8];	// children
+	Vector origin;				// origin
+	Vector halfDims;			// half-dimension
+	Datum *data;					// leaf data
 };
 
 #endif  // __OCTREE_H__

@@ -1,7 +1,9 @@
-#ifndef VECTOR_H
-#define	VECTOR_H
+#ifndef __VECTOR_H__
+#define	__VECTOR_H__
 
-class Vector {
+/////////////////////////////////////////////////////////////////////////////
+class Vector 
+{
 public:
   Vector();
   Vector(float x, float y, float z);
@@ -9,10 +11,14 @@ public:
   virtual ~Vector();
 
   Vector& operator =(const Vector& rhs);
+	Vector operator +(const Vector& r) const;
+	Vector operator -(const Vector& r) const;
+	Vector operator *(float r) const;
+	Vector operator /(float r) const;
 
   float x, y, z;
   friend bool operator ==(const Vector& lhs, const Vector &rhs);
 };
 
-#endif	/* VECTOR_H */
+#endif	// __VECTOR_H__
 

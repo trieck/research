@@ -1,7 +1,8 @@
+*.opensdf
+*.sdf
+*.suo
+*.user
 Debug/
 Release/
 ipch/
-*.sdf
-*.opensdf
-*.user
-*.suo
+x64/
