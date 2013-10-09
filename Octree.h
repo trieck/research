@@ -14,7 +14,7 @@
 #include "region.h"
 
 /////////////////////////////////////////////////////////////////////////////
-class Octree 
+class Octree : public IWalkable<Datum> 
 {
 	// Construction / Destruction
 public:
@@ -24,6 +24,9 @@ public:
 	// Interface
   void insert(const Datum& d);
   void query(const Region& region, DatumVec& results);
+	bool contains(const Vector& point) const;
+	
+	void Walk(PWALKER);
 
 	// Implementation
 private:

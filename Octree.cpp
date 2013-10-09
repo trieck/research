@@ -106,3 +106,42 @@ void Octree::query(const Region &region, DatumVec& results)
 		}
 	}
 }
+
+/////////////////////////////////////////////////////////////////////////////
+bool Octree::contains(const Vector& point) const
+{
+	if (isLeaf()) {
+		if (data != NULL) {
+			return point == data->getPosition();
+		}
+		return false;
+	} else {
+		for (int i = 0; i < 8; ++i) {
+			// compute min/max corners of the octant
+			Vector cmin = children[i]->origin - children[i]->halfDims;
+			Vector cmax = children[i]->origin + children[i]->halfDims;
+
+			// check if point is contained in child's bounding region
+			Region childRegion(cmin, cmax);
+			if (childRegion.contains(point))
+				if (children[i]->contains(point))
+					return true;
+		}
+	}
+
+	return false;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void Octree::Walk(PWALKER pWalker)
+{
+	if (isLeaf()) {
+		if (data != NULL) {
+			pWalker->Call(data);
+		}
+	} else {
+		for (int i = 0; i < 8; ++i) {
+			children[i]->Walk(pWalker);
+		}
+	}
+}
