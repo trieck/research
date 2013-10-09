@@ -18,20 +18,23 @@ class Octree : public IWalkable<Datum>
 {
 	// Construction / Destruction
 public:
-  Octree(const Vector& origin, const Vector& halfDims);
-  virtual ~Octree();
+	Octree(const Vector& origin, const Vector& halfDims);
+	virtual ~Octree();
 
 	// Interface
-  void insert(const Datum& d);
-  void query(const Region& region, DatumVec& results);
+	void insert(const Datum& d);
+	void query(const Region& region, DatumVec& results) const;
 	bool contains(const Vector& point) const;
-	
+	bool encode(const Vector& point, string& str) const;
 	void Walk(PWALKER);
 
 	// Implementation
 private:
 	bool isLeaf() const;
 	int octant(const Datum& d) const;
+	int octant(const Vector& d) const;
+	void corners(Vector& min, Vector& max) const;
+	string encodeOctant(const Vector& point) const;
 	void destroy();
 	Octree *children[8];	// children
 	Vector origin;				// origin

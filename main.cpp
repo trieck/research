@@ -61,15 +61,19 @@ void OCTreeTest::Call(const Datum* pData, PVOID pExtra)
 void OCTreeTest::test(int npoints)
 {
 	HiresTimer timer;
-	
+
 	// create an octree centered at origin 
 	// with physical dimensions 2x2x2
 	Octree tree(Vector(0, 0, 0), Vector(1, 1, 1));
 
 	// insert random points into the tree
+	string str;
 	for (int i = 0; i < npoints; ++i) {
 		Vector vec = randomVec();
 		tree.insert(vec);		
+
+		str.clear();
+		tree.encode(vec, str);
 	}
 
 	// create a query region

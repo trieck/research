@@ -46,15 +46,41 @@ bool Octree::isLeaf() const
 /////////////////////////////////////////////////////////////////////////////
 int Octree::octant(const Datum& datum) const 
 {
-	int octant = 0;
+	return octant(datum.getPosition());
+}
 
-	const Vector& point = datum.getPosition();
+/////////////////////////////////////////////////////////////////////////////
+int Octree::octant(const Vector& point) const 
+{
+	int octant = 0;
 
 	if (point.x >= origin.x) octant |= 4;
 	if (point.y >= origin.y) octant |= 2;
 	if (point.z >= origin.z) octant |= 1;
 
 	return octant;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+string Octree::encodeOctant(const Vector& point) const
+{
+	string output;
+
+	uint8_t o = octant(point) & 7;
+
+	for (int i = 2; i >= 0; i--) {
+		output += o & (1 << i) ? '1' : '0';
+	}
+
+	return output;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void Octree::corners(Vector& min, Vector& max) const
+{
+	// compute min/max corners of the octant
+	min = origin - halfDims;
+	max = origin + halfDims;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -86,7 +112,7 @@ void Octree::insert(const Datum& d)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void Octree::query(const Region &region, DatumVec& results)
+void Octree::query(const Region &region, DatumVec& results) const
 {
 	if (isLeaf()) {
 		if (data != NULL) {
@@ -95,9 +121,8 @@ void Octree::query(const Region &region, DatumVec& results)
 		}
 	} else {
 		for (int i = 0; i < 8; ++i) {
-			// compute min/max corners of the octant
-			Vector cmin = children[i]->origin - children[i]->halfDims;
-			Vector cmax = children[i]->origin + children[i]->halfDims;
+			Vector cmin, cmax;
+			children[i]->corners(cmin, cmax);
 
 			// check if query intersects child's bounding region
 			Region childRegion(cmin, cmax);
@@ -117,9 +142,8 @@ bool Octree::contains(const Vector& point) const
 		return false;
 	} else {
 		for (int i = 0; i < 8; ++i) {
-			// compute min/max corners of the octant
-			Vector cmin = children[i]->origin - children[i]->halfDims;
-			Vector cmax = children[i]->origin + children[i]->halfDims;
+			Vector cmin, cmax;
+			children[i]->corners(cmin, cmax);
 
 			// check if point is contained in child's bounding region
 			Region childRegion(cmin, cmax);
@@ -128,6 +152,35 @@ bool Octree::contains(const Vector& point) const
 					return true;
 		}
 	}
+
+	return false;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+bool Octree::encode(const Vector& point, string &str) const
+{
+	if (isLeaf()) {
+		if (data != NULL) {
+			return point == data->getPosition();
+		}
+		return false;
+	} else {
+		for (int i = 0; i < 8; ++i) {
+			Vector cmin, cmax;
+			children[i]->corners(cmin, cmax);
+
+			// check if point is contained in child's bounding region
+			Region childRegion(cmin, cmax);
+			if (childRegion.contains(point)) {
+				if (children[i]->contains(point)) {
+					str += encodeOctant(point);
+					return true;
+				}
+			}
+		}
+	}
+
+	str.clear();	// not found
 
 	return false;
 }

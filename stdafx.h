@@ -8,6 +8,7 @@
 
 #include <windows.h>
 #include <ObjBase.h>
+#include <stdint.h>
 #include <memory>
 #include <string>
 #include <iostream>
