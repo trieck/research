@@ -2,8 +2,6 @@
 //
 //	HIRESTIMER.CPP : High resolution timer
 //
-//	Copyright(c) 2006, Thomas A. Rieck, All Rights Reserved
-//
 
 #include "stdafx.h"
 #include "HiresTimer.h"

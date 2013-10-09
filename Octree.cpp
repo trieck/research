@@ -1,17 +1,29 @@
+/////////////////////////////////////////////////////////////////////////////
+// 
+// OCTREE.CPP : Octree data structure
+// Each node in an octree subdivides the space it represents into eight 
+// octants. The subdivision point is implicitly the center of the space the 
+// node represents. The root node of an octree must represent a finite 
+// bounded space so that the implicit centers are well-defined.
+//
+
 #include "stdafx.h"
 #include "Octree.h"
 #include <string.h>
 
+/////////////////////////////////////////////////////////////////////////////
 Octree::Octree(const Vector &origin, float size) : value(0) {
   this->origin = origin;
   this->size = size;
   memset(children, 0, sizeof (Octree*) * 8);
 }
 
+/////////////////////////////////////////////////////////////////////////////
 Octree::~Octree() {
   destroy();
 }
 
+/////////////////////////////////////////////////////////////////////////////
 void Octree::destroy() {
   if (value != NULL) {
     delete value;
@@ -22,10 +34,12 @@ void Octree::destroy() {
     delete children[i];
 }
 
+/////////////////////////////////////////////////////////////////////////////
 bool Octree::isLeaf() const {
   return children[0] == NULL;
 }
 
+/////////////////////////////////////////////////////////////////////////////
 int Octree::octant(const Vector& point) const {
 
   int octant = 0;
@@ -37,6 +51,7 @@ int Octree::octant(const Vector& point) const {
   return octant;
 }
 
+/////////////////////////////////////////////////////////////////////////////
 void Octree::insert(const Vector& point) {
 
   if (isLeaf()) {
