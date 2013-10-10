@@ -26,6 +26,7 @@ public:
 	// Interface
 	void insert(const Datum& d);
 	void query(const Region& region, DatumVec& results) const;
+	void query(const wstring& q, DatumVec& results) const;
 	bool contains(const Vector& point) const;
 	wstring encode(const Vector& point) const;
 	Region getRegion() const;
@@ -37,7 +38,8 @@ private:
 	uint8_t octant(const Datum& d) const;
 	uint8_t octant(const Vector& d) const;
 	bool encodeR(const Vector& point, ByteStack& stack) const;
-	wstring encodeOctant(uint8_t octant) const;
+	wchar_t encodeOctant(uint8_t octant) const;
+	void query(const wstring& q, uint32_t index, DatumVec& results) const;
 	void destroy();
 	Octree*children[8];	// children
 	Vector origin;				// origin

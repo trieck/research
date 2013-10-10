@@ -21,6 +21,7 @@ public:
 	Datum& operator = (const Datum& rhs);
 	const Vector &getPosition() const;
 
+	friend bool operator ==(const Datum& lhs, const Datum &rhs);
 	// Implementation
 private:
 	Vector position;

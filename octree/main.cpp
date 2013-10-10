@@ -11,7 +11,7 @@ public:
 	~OCTreeTest() {}
 
 	// Interface
-	void test(int count);
+	void test(int count, wchar_t* query);
 	void Call(const Datum*, PVOID pExtra = NULL);
 
 	// Implementation
@@ -58,7 +58,7 @@ void OCTreeTest::Call(const Datum* pData, PVOID pExtra)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void OCTreeTest::test(int npoints)
+void OCTreeTest::test(int npoints, wchar_t* query)
 {
 	HiresTimer timer;
 
@@ -69,16 +69,12 @@ void OCTreeTest::test(int npoints)
 	// insert random points into the tree
 	for (int i = 0; i < npoints; ++i) {
 		Vector vec = randomVec();
-		tree.insert(vec);		
-		wcout << tree.encode(vec) << endl;
+		tree.insert(vec);
 	}
 
-	// create a query region
-	Region region(Vector(-.5,-.5,-.5), Vector(.5,.5,.5));
-
-	// query the octree
+	// query the tree
 	DatumVec results;
-	tree.query(region, results);
+	tree.query(query, results);
 
 	wcout << L"   found " << results.size() << L" points." << endl;
 	wcout << L"   elapsed time " << timer << endl;
@@ -87,13 +83,13 @@ void OCTreeTest::test(int npoints)
 /////////////////////////////////////////////////////////////////////////////
 int wmain(int argc, wchar_t* argv[]) 
 {
-	if (argc == 1) {
-		wcerr << L"usage: octree points" << endl;
+	if (argc < 3) {
+		wcerr << L"usage: octree points query" << endl;
 		exit(1);
 	}
 
 	OCTreeTest test;
-	test.test(_wtoi(argv[1]));
+	test.test(_wtoi(argv[1]), argv[2]);
 
 	return 0;
 }

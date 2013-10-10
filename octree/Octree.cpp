@@ -115,6 +115,32 @@ void Octree::query(const Region &region, DatumVec& results) const
 }
 
 /////////////////////////////////////////////////////////////////////////////
+void Octree::query(const wstring& q, DatumVec& results) const
+{
+	query(q, 0, results);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void Octree::query(const wstring& q, uint32_t index, DatumVec& results) const
+{
+	if (index >= q.length())
+		return;
+
+	wchar_t c = q[index];
+	if (c < L'0' || c > L'7')
+		return;	// bad query
+
+	uint8_t octant = c - L'0';
+
+	if (isLeaf()) {
+		if (octant == 0 && index == q.length() - 1 && data != NULL)
+			results.push_back(*data);
+	} else {
+		children[octant]->query(q, index+1, results);
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////
 bool Octree::contains(const Vector& point) const
 {
 	if (isLeaf()) {
@@ -135,15 +161,9 @@ bool Octree::contains(const Vector& point) const
 }
 
 /////////////////////////////////////////////////////////////////////////////
-wstring Octree::encodeOctant(uint8_t octant) const
+wchar_t Octree::encodeOctant(uint8_t octant) const
 {
-	wstring output;
-
-	for (int i = 2; i >= 0; i--) {
-		output += octant & (1 << i) ? L'1' : L'0';
-	}
-
-	return output;
+	return L'0' + (octant & 7);
 }
 
 /////////////////////////////////////////////////////////////////////////////

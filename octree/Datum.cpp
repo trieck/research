@@ -39,3 +39,8 @@ const Vector& Datum::getPosition() const
 	return position;
 }
 
+/////////////////////////////////////////////////////////////////////////////
+bool operator == (const Datum& lhs, const Datum& rhs) 
+{
+	return lhs.getPosition() == rhs.getPosition();
+}
