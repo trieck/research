@@ -62,14 +62,14 @@ int Octree::octant(const Vector& point) const
 }
 
 /////////////////////////////////////////////////////////////////////////////
-string Octree::encodeOctant(const Vector& point) const
+wstring Octree::encodeOctant(const Vector& point) const
 {
-	string output;
+	wstring output;
 
 	uint8_t o = octant(point) & 7;
 
 	for (int i = 2; i >= 0; i--) {
-		output += o & (1 << i) ? '1' : '0';
+		output += o & (1 << i) ? L'1' : L'0';
 	}
 
 	return output;
@@ -156,14 +156,14 @@ bool Octree::contains(const Vector& point) const
 }
 
 /////////////////////////////////////////////////////////////////////////////
-string Octree::encode(const Vector& point) const
+wstring Octree::encode(const Vector& point) const
 {
 	StringStack stack;
 
 	if (!encodeR(point, stack))
-		return "";
+		return L"";
 
-	string output;
+	wstring output;
 	while (!stack.empty()) {
 		output += stack.top();
 		stack.pop();
@@ -178,7 +178,7 @@ bool Octree::encodeR(const Vector& point, StringStack& stack) const
 	if (isLeaf()) {
 		if (data != NULL) {
 			if (point == data->getPosition()) {
-				stack.push("000");
+				stack.push(L"000");
 				return true;
 			}
 		}

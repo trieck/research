@@ -70,7 +70,7 @@ void OCTreeTest::test(int npoints)
 	for (int i = 0; i < npoints; ++i) {
 		Vector vec = randomVec();
 		tree.insert(vec);		
-		cout << tree.encode(vec) << endl;
+		wcout << tree.encode(vec) << endl;
 	}
 
 	// create a query region
@@ -80,20 +80,20 @@ void OCTreeTest::test(int npoints)
 	DatumVec results;
 	tree.query(region, results);
 
-	cout << "   found " << results.size() << " points." << endl;
-	cout << "   elapsed time " << timer << endl;
+	wcout << L"   found " << results.size() << L" points." << endl;
+	wcout << L"   elapsed time " << timer << endl;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-int main(int argc, char** argv) 
+int wmain(int argc, wchar_t* argv[]) 
 {
 	if (argc == 1) {
-		cerr << "usage: octree points" << endl;
+		wcerr << L"usage: octree points" << endl;
 		exit(1);
 	}
 
 	OCTreeTest test;
-	test.test(atoi(argv[1]));
+	test.test(_wtoi(argv[1]));
 
 	return 0;
 }
