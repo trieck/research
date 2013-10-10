@@ -30,9 +30,6 @@
     <ClInclude Include="attribute.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HiresTimer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -48,9 +45,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="attribute.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HiresTimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
