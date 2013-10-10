@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////////
 // 
-// REGION.H : Bounding region class for querying octree
+// REGION.H : Bounding region class
 //
 
 #ifndef __REGION_H__
@@ -13,10 +13,12 @@ class Region
 {
 	// Construction / Destruction
 public:
-  Region(const Vector &min, const Vector& max);
+  Region(const Vector& min, const Vector& max);
+	Region(const Region& region);
   ~Region();
 
 	// Interface
+	Region& operator =(const Region& region);
   bool contains(const Vector& point) const;
 	bool intersects(const Region& rgn) const;
 

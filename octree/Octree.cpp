@@ -44,43 +44,21 @@ bool Octree::isLeaf() const
 }
 
 /////////////////////////////////////////////////////////////////////////////
-int Octree::octant(const Datum& datum) const 
+uint8_t Octree::octant(const Datum& datum) const 
 {
 	return octant(datum.getPosition());
 }
 
 /////////////////////////////////////////////////////////////////////////////
-int Octree::octant(const Vector& point) const 
+uint8_t Octree::octant(const Vector& point) const 
 {
-	int octant = 0;
+	uint8_t octant = 0;
 
 	if (point.x >= origin.x) octant |= 4;
 	if (point.y >= origin.y) octant |= 2;
 	if (point.z >= origin.z) octant |= 1;
 
 	return octant;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-wstring Octree::encodeOctant(const Vector& point) const
-{
-	wstring output;
-
-	uint8_t o = octant(point) & 7;
-
-	for (int i = 2; i >= 0; i--) {
-		output += o & (1 << i) ? L'1' : L'0';
-	}
-
-	return output;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-void Octree::corners(Vector& min, Vector& max) const
-{
-	// compute min/max corners of the octant
-	min = origin - halfDims;
-	max = origin + halfDims;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -112,6 +90,13 @@ void Octree::insert(const Datum& d)
 }
 
 /////////////////////////////////////////////////////////////////////////////
+Region Octree::getRegion() const
+{
+	// compute min/max corners of the octant
+	return Region(origin - halfDims, origin + halfDims);
+}
+
+/////////////////////////////////////////////////////////////////////////////
 void Octree::query(const Region &region, DatumVec& results) const
 {
 	if (isLeaf()) {
@@ -121,11 +106,8 @@ void Octree::query(const Region &region, DatumVec& results) const
 		}
 	} else {
 		for (int i = 0; i < 8; ++i) {
-			Vector cmin, cmax;
-			children[i]->corners(cmin, cmax);
-
 			// check if query intersects child's bounding region
-			Region childRegion(cmin, cmax);
+			Region childRegion = children[i]->getRegion();
 			if (region.intersects(childRegion))
 				children[i]->query(region, results);
 		}
@@ -141,11 +123,8 @@ bool Octree::contains(const Vector& point) const
 		}
 	} else {
 		for (int i = 0; i < 8; ++i) {
-			Vector cmin, cmax;
-			children[i]->corners(cmin, cmax);
-
 			// check if point is contained in child's bounding region
-			Region childRegion(cmin, cmax);
+			Region childRegion = children[i]->getRegion();
 			if (childRegion.contains(point))
 				if (children[i]->contains(point))
 					return true;
@@ -156,16 +135,30 @@ bool Octree::contains(const Vector& point) const
 }
 
 /////////////////////////////////////////////////////////////////////////////
+wstring Octree::encodeOctant(uint8_t octant) const
+{
+	wstring output;
+
+	for (int i = 2; i >= 0; i--) {
+		output += octant & (1 << i) ? L'1' : L'0';
+	}
+
+	return output;
+}
+
+/////////////////////////////////////////////////////////////////////////////
 wstring Octree::encode(const Vector& point) const
 {
-	StringStack stack;
+	ByteStack stack;
 
 	if (!encodeR(point, stack))
 		return L"";
 
 	wstring output;
+	uint8_t octant;
 	while (!stack.empty()) {
-		output += stack.top();
+		octant = stack.top();
+		output += encodeOctant(octant);
 		stack.pop();
 	}
 
@@ -173,25 +166,22 @@ wstring Octree::encode(const Vector& point) const
 }
 
 /////////////////////////////////////////////////////////////////////////////
-bool Octree::encodeR(const Vector& point, StringStack& stack) const
+bool Octree::encodeR(const Vector& point, ByteStack& stack) const
 {
 	if (isLeaf()) {
 		if (data != NULL) {
 			if (point == data->getPosition()) {
-				stack.push(L"000");
+				stack.push(0);
 				return true;
 			}
 		}
 	} else {
 		for (int i = 0; i < 8; ++i) {
-			Vector cmin, cmax;
-			children[i]->corners(cmin, cmax);
-
 			// check if point is contained in child's bounding region
-			Region childRegion(cmin, cmax);
+			Region childRegion = children[i]->getRegion();
 			if (childRegion.contains(point)) {
 				if (children[i]->encodeR(point, stack)) {
-					stack.push(encodeOctant(point));
+					stack.push(octant(point));
 					return true;
 				}
 			}

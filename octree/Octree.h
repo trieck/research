@@ -13,7 +13,7 @@
 #include "Datum.h"
 #include "region.h"
 
-typedef std::stack<wstring> StringStack;
+typedef std::stack<uint8_t> ByteStack;
 
 /////////////////////////////////////////////////////////////////////////////
 class Octree : public IWalkable<Datum> 
@@ -28,18 +28,18 @@ public:
 	void query(const Region& region, DatumVec& results) const;
 	bool contains(const Vector& point) const;
 	wstring encode(const Vector& point) const;
+	Region getRegion() const;
 	void Walk(PWALKER);
 
 	// Implementation
 private:
 	bool isLeaf() const;
-	int octant(const Datum& d) const;
-	int octant(const Vector& d) const;
-	void corners(Vector& min, Vector& max) const;
-	bool encodeR(const Vector& point, StringStack& stack) const;
-	wstring encodeOctant(const Vector& point) const;
+	uint8_t octant(const Datum& d) const;
+	uint8_t octant(const Vector& d) const;
+	bool encodeR(const Vector& point, ByteStack& stack) const;
+	wstring encodeOctant(uint8_t octant) const;
 	void destroy();
-	Octree *children[8];	// children
+	Octree*children[8];	// children
 	Vector origin;				// origin
 	Vector halfDims;			// half-dimension
 	Datum *data;					// leaf data
