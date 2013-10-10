@@ -56,15 +56,6 @@
     <ClCompile Include="btree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="blockio.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="randstream.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HiresTimer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="datum.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
