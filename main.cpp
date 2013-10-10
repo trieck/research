@@ -67,17 +67,14 @@ void OCTreeTest::test(int npoints)
 	Octree tree(Vector(0, 0, 0), Vector(1, 1, 1));
 
 	// insert random points into the tree
-	string str;
 	for (int i = 0; i < npoints; ++i) {
 		Vector vec = randomVec();
 		tree.insert(vec);		
-
-		str.clear();
-		tree.encode(vec, str);
+		cout << tree.encode(vec) << endl;
 	}
 
 	// create a query region
-	Region region(Vector(-.05f,-.05f,-.05f), Vector(.05f,.05f,.05f));
+	Region region(Vector(-.5,-.5,-.5), Vector(.5,.5,.5));
 
 	// query the octree
 	DatumVec results;

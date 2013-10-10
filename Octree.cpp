@@ -139,7 +139,6 @@ bool Octree::contains(const Vector& point) const
 		if (data != NULL) {
 			return point == data->getPosition();
 		}
-		return false;
 	} else {
 		for (int i = 0; i < 8; ++i) {
 			Vector cmin, cmax;
@@ -157,13 +156,32 @@ bool Octree::contains(const Vector& point) const
 }
 
 /////////////////////////////////////////////////////////////////////////////
-bool Octree::encode(const Vector& point, string &str) const
+string Octree::encode(const Vector& point) const
+{
+	StringStack stack;
+
+	if (!encodeR(point, stack))
+		return "";
+
+	string output;
+	while (!stack.empty()) {
+		output += stack.top();
+		stack.pop();
+	}
+
+	return output;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+bool Octree::encodeR(const Vector& point, StringStack& stack) const
 {
 	if (isLeaf()) {
 		if (data != NULL) {
-			return point == data->getPosition();
+			if (point == data->getPosition()) {
+				stack.push("000");
+				return true;
+			}
 		}
-		return false;
 	} else {
 		for (int i = 0; i < 8; ++i) {
 			Vector cmin, cmax;
@@ -172,15 +190,13 @@ bool Octree::encode(const Vector& point, string &str) const
 			// check if point is contained in child's bounding region
 			Region childRegion(cmin, cmax);
 			if (childRegion.contains(point)) {
-				if (children[i]->contains(point)) {
-					str += encodeOctant(point);
+				if (children[i]->encodeR(point, stack)) {
+					stack.push(encodeOctant(point));
 					return true;
 				}
 			}
 		}
 	}
-
-	str.clear();	// not found
 
 	return false;
 }

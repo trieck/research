@@ -13,6 +13,7 @@
 #include <string>
 #include <iostream>
 #include <random>
+#include <stack>
 
 using std::string;
 using std::ostream;
