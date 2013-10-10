@@ -8,7 +8,6 @@
 #define UNICODE
 #endif // _UNICODE
 
-#define NOMINMAX							// Don't use min/max
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 
 #include <windows.h>
@@ -61,3 +60,7 @@ public:
 	typedef ICallable<T> *PWALKER;
 	virtual void Walk(PWALKER) PURE;
 };
+
+/////////////////////////////////////////////////////////////////////////////
+// file open modes
+enum OpenMode { OM_CREATE, OM_TEMP, OM_RW, OM_RO };
