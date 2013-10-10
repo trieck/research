@@ -123,19 +123,22 @@ void Octree::query(const wstring& q, DatumVec& results) const
 /////////////////////////////////////////////////////////////////////////////
 void Octree::query(const wstring& q, uint32_t index, DatumVec& results) const
 {
-	if (index >= q.length())
-		return;
+	if (index >= q.length()) {
+		if (isLeaf()) {
+			if (data != NULL)
+				results.push_back(*data);
+		} else {
+			for (int i = 0; i < 8; ++i) {
+				children[i]->query(q, index, results);
+			}
+		}
+	} else if (!isLeaf()) {
+		wchar_t c = q[index];
+		if (c < L'0' || c > L'7')
+			return;	// bad query
 
-	wchar_t c = q[index];
-	if (c < L'0' || c > L'7')
-		return;	// bad query
+		uint8_t octant = c - L'0';
 
-	uint8_t octant = c - L'0';
-
-	if (isLeaf()) {
-		if (octant == 0 && index == q.length() - 1 && data != NULL)
-			results.push_back(*data);
-	} else {
 		children[octant]->query(q, index+1, results);
 	}
 }
@@ -191,7 +194,6 @@ bool Octree::encodeR(const Vector& point, ByteStack& stack) const
 	if (isLeaf()) {
 		if (data != NULL) {
 			if (point == data->getPosition()) {
-				stack.push(0);
 				return true;
 			}
 		}
