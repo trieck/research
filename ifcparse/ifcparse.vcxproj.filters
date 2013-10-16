@@ -24,9 +24,6 @@
     <ClInclude Include="ifcparser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="exception.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="attribute.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -39,9 +36,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ifcparser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="exception.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="attribute.cpp">

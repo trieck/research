@@ -3,7 +3,7 @@
 //	EXCEPTION.CPP : simple exception class
 //
 
-#include "stdafx.h"
+#include "common.h"
 #include "exception.h"
 
 /////////////////////////////////////////////////////////////////////////////
