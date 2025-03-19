@@ -13,40 +13,38 @@
 #include "Datum.h"
 #include "region.h"
 
-typedef std::stack<uint8_t> ByteStack;
+using ByteStack = std::stack<uint8_t>;
 
 /////////////////////////////////////////////////////////////////////////////
-class Octree : public IWalkable<Datum> 
+class Octree : public IWalkable<Datum>
 {
-	// Construction / Destruction
+    // Construction / Destruction
 public:
-	Octree(const Vector& origin, const Vector& halfDims);
-	virtual ~Octree();
+    Octree(const Vector& origin, const Vector& halfDims);
+    virtual ~Octree();
 
-	// Interface
-	void insert(const Datum& d);
-	void query(const Region& region, DatumVec& results) const;
-	void query(const wstring& q, DatumVec& results) const;
-	bool contains(const Vector& point) const;
-	wstring encode(const Vector& point) const;
-	Region getRegion() const;
-	void Walk(PWALKER);
+    // Interface
+    void insert(const Datum& d);
+    void query(const Region& region, DatumVec& results) const;
+    void query(const wstring& q, DatumVec& results) const;
+    bool contains(const Vector& point) const;
+    wstring encode(const Vector& point) const;
+    Region getRegion() const;
+    void Walk(PWALKER) override;
 
-	// Implementation
+    // Implementation
 private:
-	bool isLeaf() const;
-	uint8_t octant(const Datum& d) const;
-	uint8_t octant(const Vector& d) const;
-	bool encodeR(const Vector& point, ByteStack& stack) const;
-	wchar_t encodeOctant(uint8_t octant) const;
-	void query(const wstring& q, uint32_t index, DatumVec& results) const;
-	void destroy();
-	Octree*children[8];	// children
-	Vector origin;				// origin
-	Vector halfDims;			// half-dimension
-	Datum *data;					// leaf data
+    bool isLeaf() const;
+    uint8_t octant(const Datum& d) const;
+    uint8_t octant(const Vector& d) const;
+    bool encodeR(const Vector& point, ByteStack& stack) const;
+    wchar_t encodeOctant(uint8_t octant) const;
+    void query(const wstring& q, uint32_t index, DatumVec& results) const;
+    void destroy();
+    Octree* children[8]; // children
+    Vector origin; // origin
+    Vector halfDims; // half-dimension
+    Datum* data; // leaf data
 };
 
 #endif  // __OCTREE_H__
-
-

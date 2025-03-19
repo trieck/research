@@ -7,15 +7,15 @@
 #include "Datum.h"
 
 /////////////////////////////////////////////////////////////////////////////
-Datum::Datum(const Vector& pos) 
+Datum::Datum(const Vector& pos)
 {
-	position = pos;
+    position = pos;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 Datum::Datum(const Datum& datum)
 {
-	*this = datum;
+    *this = datum;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -24,23 +24,23 @@ Datum::~Datum()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-Datum& Datum::operator = (const Datum& rhs)
+Datum& Datum::operator =(const Datum& rhs)
 {
-	if (this != &rhs) {
-		position = rhs.position;
-	}
+    if (this != &rhs) {
+        position = rhs.position;
+    }
 
-	return *this;
+    return *this;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 const Vector& Datum::getPosition() const
 {
-	return position;
+    return position;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-bool operator == (const Datum& lhs, const Datum& rhs) 
+bool operator ==(const Datum& lhs, const Datum& rhs)
 {
-	return lhs.getPosition() == rhs.getPosition();
+    return lhs.getPosition() == rhs.getPosition();
 }

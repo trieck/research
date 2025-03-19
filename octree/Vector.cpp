@@ -2,68 +2,68 @@
 #include "Vector.h"
 
 /////////////////////////////////////////////////////////////////////////////
-Vector::Vector() 
+Vector::Vector()
 {
-	x = y = z = 0;
+    x = y = z = 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-Vector::Vector(float x, float y, float z) 
+Vector::Vector(float x, float y, float z)
 {
-	this->x = x;
-	this->y = y;
-	this->z = z;
+    this->x = x;
+    this->y = y;
+    this->z = z;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-Vector::Vector(const Vector& orig) 
+Vector::Vector(const Vector& orig)
 {
-	*this = orig;
+    *this = orig;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-Vector::~Vector() 
+Vector::~Vector()
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////
-Vector& Vector::operator =(const Vector& rhs) 
+Vector& Vector::operator =(const Vector& rhs)
 {
-	if (this != &rhs) {
-		x = rhs.x;
-		y = rhs.y;
-		z = rhs.z;
-	}
+    if (this != &rhs) {
+        x = rhs.x;
+        y = rhs.y;
+        z = rhs.z;
+    }
 
-	return *this;
+    return *this;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-Vector Vector::operator+(const Vector& r) const 
+Vector Vector::operator+(const Vector& r) const
 {
-	return Vector(x+r.x, y+r.y, z+r.z); 
+    return Vector(x + r.x, y + r.y, z + r.z);
 }
 
 /////////////////////////////////////////////////////////////////////////////
-Vector Vector::operator-(const Vector& r) const 
+Vector Vector::operator-(const Vector& r) const
 {
-	return Vector(x-r.x, y-r.y, z-r.z); 
+    return Vector(x - r.x, y - r.y, z - r.z);
 }
 
 /////////////////////////////////////////////////////////////////////////////
-Vector Vector::operator*(float r) const 
+Vector Vector::operator*(float r) const
 {
-	return Vector(x*r, y*r, z*r);
+    return Vector(x * r, y * r, z * r);
 }
 
 /////////////////////////////////////////////////////////////////////////////
-Vector Vector::operator/(float r) const 
+Vector Vector::operator/(float r) const
 {
-	return Vector(x/r, y/r, z/r);
+    return Vector(x / r, y / r, z / r);
 }
 
 /////////////////////////////////////////////////////////////////////////////
-bool operator == (const Vector& lhs, const Vector &rhs) 
+bool operator ==(const Vector& lhs, const Vector& rhs)
 {
-	return (lhs.x == rhs.x ) && (lhs.y == rhs.y) && (lhs.z == rhs.z);
+    return (lhs.x == rhs.x) && (lhs.y == rhs.y) && (lhs.z == rhs.z);
 }
