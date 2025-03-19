@@ -11,30 +11,33 @@
 // size of a disk page
 #define PAGE_SIZE			(4096)
 
-typedef uint64_t pageid;
+using pageid = uint64_t;
 
 // ensure one byte alignment for structures
-#pragma pack (push, 1)	
+#pragma pack (push, 1)
 
 /////////////////////////////////////////////////////////////////////////////
-typedef struct Node {
-	pageid next;		// link to next subpage
-	Datum key;			// key for node
-	Datum value;		// value for leaf node
-} *LPNODE;
+using LPNODE = struct Node
+{
+    pageid next; // link to next subpage
+    Datum key; // key for node
+    Datum value; // value for leaf node
+}*;
 
 /////////////////////////////////////////////////////////////////////////////
-typedef struct PageHeader {
-	uint8_t flags;	// page flags
-	pageid pageno;	// page number
-	uint16_t nodes;	// number of nodes on a page
-} *LPPAGEHEADER;
+using LPPAGEHEADER = struct PageHeader
+{
+    uint8_t flags; // page flags
+    pageid pageno; // page number
+    uint16_t nodes; // number of nodes on a page
+}*;
 
 /////////////////////////////////////////////////////////////////////////////
-typedef struct Page {
-	PageHeader header;	// page header
-	Node data[1];				// page data
-} *LPPAGE;
+using LPPAGE = struct Page
+{
+    PageHeader header; // page header
+    Node data[1]; // page data
+}*;
 
 // restore default structure alignment
 #pragma pack (pop)

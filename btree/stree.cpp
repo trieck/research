@@ -19,32 +19,30 @@ StrTree::~StrTree()
 /////////////////////////////////////////////////////////////////////////////
 bool StrTree::open(LPCTSTR filename, OpenMode m)
 {
-	return BTree::open(filename, m);
+    return BTree::open(filename, m);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 void StrTree::close()
 {
-	BTree::close();
+    BTree::close();
 }
 
 /////////////////////////////////////////////////////////////////////////////
 void StrTree::insert(const wstring& key, const wstring& value)
 {
-	Datum dKey = UTF8Datum(key.c_str());
-	Datum dVal = UTF8Datum(value.c_str());
-	BTree::insert(dKey, dVal);
+    Datum dKey = UTF8Datum(key.c_str());
+    Datum dVal = UTF8Datum(value.c_str());
+    BTree::insert(dKey, dVal);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 wstring StrTree::search(const wstring& key)
 {
-	Datum dKey = UTF8Datum(key.c_str());
-	Datum value = BTree::search(dKey);
-	if (IsNullDatum(value))
-		return L"";
+    Datum dKey = UTF8Datum(key.c_str());
+    Datum value = BTree::search(dKey);
+    if (IsNullDatum(value))
+        return L"";
 
-	return DatumToString(value);
+    return DatumToString(value);
 }
-
-

@@ -3,74 +3,72 @@
 #include "HiresTimer.h"
 #include <random>
 
-namespace {		// anonymous
+namespace { // anonymous
 
 wstring randomString()
 {
-	wstring output;
-	wchar_t c;
+    wstring output;
+    wchar_t c;
 
-	uint32_t len = MAX_DATUM_LEN/4;
+    uint32_t len = MAX_DATUM_LEN / 4;
 
-	output.resize(len);
+    output.resize(len);
 
-	LARGE_INTEGER li;
-	QueryPerformanceCounter(&li);	
+    LARGE_INTEGER li;
+    QueryPerformanceCounter(&li);
 
-	std::mt19937 eng(li.LowPart);
+    std::mt19937 eng(li.LowPart);
 
-	for (uint32_t i = 0; i < len; ++i) {
-		do {
-			c = eng() % (USHRT_MAX+1);
-		} while (!iswprint(c));
-		output[i] = c;
-	}
-	
-	return output;
+    for (uint32_t i = 0; i < len; ++i) {
+        do {
+            c = eng() % SCHAR_MAX;
+        } while (!iswprint(c));
+        output[i] = c;
+    }
+
+    return output;
 }
-
 } // anonymous
 
 int wmain(int argc, wchar_t* argv[])
 {
-	if (argc < 3) {
-		wcerr << L"usage: btree filename count" << endl;
-		exit(1);
-	}
+    if (argc < 3) {
+        wcerr << L"usage: btree filename count" << endl;
+        return 1;
+    }
 
-	HiresTimer timer;
-	
-	StrTree tree;
-	if (!tree.open(argv[1], OM_TEMP)) {
-		wcerr << L"can't open file." << endl;
-		exit(2);
-	}
-	
-	int ncount = _wtoi(argv[2]);
+    HiresTimer timer;
 
-	for (int i = 0; i < ncount; i++) {
-		wstring key = randomString();
-		wstring value = randomString();
-		
-		wstring result = tree.search(key);
-		if (result.length() > 0) {
-			i--;	// duplicate
-			continue;
-		}
+    StrTree tree;
+    if (!tree.open(argv[1], OM_TEMP)) {
+        wcerr << L"can't open file." << endl;
+        return 2;
+    }
 
-		tree.insert(key, value);
+    int ncount = _wtoi(argv[2]);
 
-		result = tree.search(key);
-		if (result != value) {
-			wcerr << L"search mismatch!" << endl;
-			exit(3);
-		}
-	}
+    for (int i = 0; i < ncount; i++) {
+        wstring key = randomString();
+        wstring value = randomString();
 
-	tree.close();
+        wstring result = tree.search(key);
+        if (!result.empty()) {
+            i--; // duplicate
+            continue;
+        }
 
-	wcout << L"   elapsed time: " << timer << endl;
+        tree.insert(key, value);
 
-	return 0;
+        result = tree.search(key);
+        if (result != value) {
+            wcerr << L"search mismatch!" << endl;
+            return 3;
+        }
+    }
+
+    tree.close();
+
+    wcout << L"   elapsed time: " << timer << endl;
+
+    return 0;
 }
-

@@ -11,27 +11,26 @@
 /////////////////////////////////////////////////////////////////////////////
 class PageStack
 {
-	// Construction / Destruction
+    // Construction / Destruction
 public:
-	PageStack();
-	~PageStack();
+    PageStack();
+    ~PageStack();
 
-	// Interface
-	LPPAGE push();
-	LPPAGE pop();
+    // Interface
+    LPPAGE push();
+    LPPAGE pop();
 
-	// Implementation
+    // Implementation
 private:
-	void allocpages();
-	void reallocpages();
-	void freepages();
-	enum { INITIAL_SIZE = 5 };
+    void allocpages();
+    void reallocpages();
+    void freepages();
 
-	LPPAGE* pages;			// array of page pointers
-	uint32_t elements;	// number of elements in array
-	uint32_t index;			// stack pointer
+    enum { INITIAL_SIZE = 5 };
+
+    LPPAGE* pages; // array of page pointers
+    uint32_t elements; // number of elements in array
+    uint32_t index; // stack pointer
 };
 
 #endif // __PAGESTACK_H__
-
-

@@ -9,20 +9,19 @@
 #include "btree.h"
 
 /////////////////////////////////////////////////////////////////////////////
-class StrTree : private BTree
+class StrTree : BTree
 {
-	// Construction / Destruction
+    // Construction / Destruction
 public:
-	StrTree();
-	virtual ~StrTree();
+    StrTree();
+    ~StrTree() override;
 
-	// Interface
-public:
-	bool open(LPCTSTR filename, OpenMode m);
-	void close();
+    // Interface
+    bool open(LPCTSTR filename, OpenMode m);
+    void close();
 
-	void insert(const wstring& key, const wstring& value);
-	wstring search(const wstring& key);
+    void insert(const wstring& key, const wstring& value);
+    wstring search(const wstring& key);
 };
 
 #endif // __STREE_H__
