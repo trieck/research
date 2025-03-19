@@ -47,18 +47,18 @@ using std::unique_ptr;
 /////////////////////////////////////////////////////////////////////////////
 // ICallable interface
 template <typename T>
-DECLARE_INTERFACE(ICallable) {
-public:
-	virtual void Call(const T*, PVOID pExtra = NULL) PURE;
+DECLARE_INTERFACE(ICallable)
+{
+    virtual void Call(const T*, PVOID pExtra = nullptr) PURE;
 };
 
 /////////////////////////////////////////////////////////////////////////////
 // IWalkable interface
 template <typename T>
-DECLARE_INTERFACE(IWalkable) {
-public:
-	typedef ICallable<T> *PWALKER;
-	virtual void Walk(PWALKER) PURE;
+DECLARE_INTERFACE(IWalkable)
+{
+    using PWALKER = ICallable<T>*;
+    virtual void Walk(PWALKER) PURE;
 };
 
 /////////////////////////////////////////////////////////////////////////////
